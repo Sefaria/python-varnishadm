@@ -8,12 +8,12 @@ Simple Python interface for the Varnish management port
 
 ::
 
-    pip install python-varnish==0.2.1
+    pip install python-varnish==0.2.2
 
 If you are running a version of varnish older than 3.0 then install python-varnish==0.1.2 instead.
 
 Varnish is a state-of-the-art, high-performance HTTP accelerator.
-For more information checkout `Varnish Site <http://varnish.projects.linpro.no/>`_
+For more information checkout `Varnish Site <https://varnish-cache.org/>`_
 
 Varnish provides a simple telnet management interface for doing things like:
 
@@ -34,9 +34,9 @@ across multiple Varnish instances. Here are the features of this python module
 
 Example::
 
-  manager = VarnishManager( ('server1:6082', 'server2:6082') )
+  manager = VarnishManager(('server1:6082', 'server2:6082'), 'secret_file_content')
   manager.run('ping')
-  manager.run('ban.url ^/secret/$')
+  manager.run('ban.url ^/articles/$')
   manager.run('ban.list')
   manager.run('purge.url', 'http://mydomain.com/articles/.*')
   manager.close()

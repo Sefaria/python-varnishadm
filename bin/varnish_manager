@@ -3,7 +3,9 @@
 from varnish import VarnishManager
 from pprint import pprint
 
-manager = VarnishManager((raw_input('Varnish Management Address (ip:port): '),))
+address = raw_input('Varnish Management Address (ip:port): ')
+secret = raw_input('Varnish Management Secret: ')
+manager = VarnishManager([address], secret)
 
 while 1:
     try:
