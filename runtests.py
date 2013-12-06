@@ -1,4 +1,4 @@
-from varnish import VarnishManager
+from varnishadm import VarnishManager
 import unittest
 
 ADDR = raw_input('Varnish Management Address (ip:port) [localhost:2000]: ')
