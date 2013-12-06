@@ -40,14 +40,17 @@ import logging
 
 
 logging.basicConfig(
-    level = logging.DEBUG,
-    format = '%(asctime)s %(levelname)s %(message)s',
+    level=logging.INFO,
+    format='%(asctime)s %(levelname)s %(message)s',
 )
+
 
 def http_purge_url(url):
     """
     Do an HTTP PURGE of the given asset.
-    The URL is run through urlparse and must point to the varnish instance not the varnishadm
+
+    The URL is run through urlparse and must point to the varnish instance not
+    the varnishadm
     """
     url = urlparse(url)
     connection = HTTPConnection(url.hostname, url.port or 80)
@@ -57,6 +60,7 @@ def http_purge_url(url):
     if response.status != 200:
         logging.error('Purge failed with status: %s' % response.status)
     return response
+
 
 class VarnishHandler(Telnet):
     def __init__(self, host_port_timeout, secret=None, **kwargs):
@@ -91,21 +95,27 @@ class VarnishHandler(Telnet):
         assert status == 200, 'Bad response code: {status} {text} ({command})'.format(status=status, text=self.read_until('\n').strip(), command=command)
         while len(content) < length:
             content += self.read_until('\n')
-        logging.debug('RECV: %s: %dB %s' % (status,length,content[:30]))
+        logging.debug('RECV: %s: %dB %s' % (status, length, content[:30]))
         self.read_eager()
         return (status, length), content
 
     # Service control methods
     def start(self):
-        """start  Start the Varnish cache process if it is not already running."""
+        """
+        Start the Varnish cache process if it is not already running.
+        """
         return self.fetch('start')
 
     def stop(self):
-        """stop   Stop the Varnish cache process."""
+        """
+        Stop the Varnish cache process.
+        """
         return self.fetch('stop')
 
     def quit(self):
-        """quit   Close the connection to the varnish admin port."""
+        """
+        Close the connection to the varnish admin port.
+        """
         return self.close()
 
     def auth(self, secret, content):
@@ -121,7 +131,8 @@ class VarnishHandler(Telnet):
             Ping the Varnish cache process, keeping the connection alive.
         """
         cmd = 'ping'
-        if timestamp: cmd += ' %s' % timestamp
+        if timestamp:
+            cmd += ' %s' % timestamp
         return tuple(map(float, self.fetch(cmd)[1].split()[1:]))
 
     def status(self):
@@ -135,7 +146,8 @@ class VarnishHandler(Telnet):
             If the command is specified, display help for this command.
         """
         cmd = 'help'
-        if command: cmd += ' %s' % command
+        if command:
+            cmd += ' %s' % command
         return self.fetch(cmd)[1]
 
     # VCL methods
@@ -198,7 +210,8 @@ class VarnishHandler(Telnet):
               If a param is specified, display only the value and explanation for this parameter.
         """
         cmd = 'param.show '
-        if l: cmd += '-l '
+        if l:
+            cmd += '-l '
         return self.fetch(cmd + param)
 
     def param_set(self, param, value):
@@ -275,11 +288,12 @@ class ThreadedRunner(Thread):
     def run(self):
         handler = VarnishHandler(self.addr, **self.kwargs)
         for cmd in self.commands:
-            if isinstance(cmd, tuple) and len(cmd)>1:
-                getattr(handler, cmd[0].replace('.','_'))(*cmd[1:])
+            if isinstance(cmd, tuple) and len(cmd) > 1:
+                getattr(handler, cmd[0].replace('.', '_'))(*cmd[1:])
             else:
-                getattr(handler, cmd.replace('.','_'))()
+                getattr(handler, cmd.replace('.', '_'))()
         handler.close()
+
 
 def run(addr, *commands, **kwargs):
     """
@@ -288,22 +302,25 @@ def run(addr, *commands, **kwargs):
     results = []
     handler = VarnishHandler(addr, **kwargs)
     for cmd in commands:
-        if isinstance(cmd, tuple) and len(cmd)>1:
-            results.extend([getattr(handler, c[0].replace('.','_'))(*c[1:]) for c in cmd])
+        if isinstance(cmd, tuple) and len(cmd) > 1:
+            results.extend([getattr(handler, c[0].replace('.', '_'))(*c[1:]) for c in cmd])
         else:
-            results.append(getattr(handler, cmd.replace('.','_'))(*commands[1:]))
+            results.append(getattr(handler, cmd.replace('.', '_'))(*commands[1:]))
             break
     handler.close()
     return results
 
+
 class VarnishManager(object):
-    def __init__(self, servers):
+    def __init__(self, servers, secret):
         if not len(servers):
             logging.warn('No servers found, please declare some')
         self.servers = servers
+        self.secret = secret
 
     def run(self, *commands, **kwargs):
         threaded = kwargs.pop('threaded', False)
+        kwargs['secret'] = self.secret
         for server in self.servers:
             if threaded:
                 [ThreadedRunner(server, *commands, **kwargs).start()
@@ -313,10 +330,8 @@ class VarnishManager(object):
                             for server in self.servers]
 
     def help(self, *args):
-        return run(self.servers[0], *('help',)+args)[0]
+        return run(self.servers[0], *('help', ) + args)[0]
 
     def close(self):
         self.run('close', threaded=True)
         self.servers = ()
-
-
