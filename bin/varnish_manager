@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from varnish import VarnishManager
+from varnishadm import VarnishManager
 from pprint import pprint
 
 address = raw_input('Varnish Management Address (ip:port): ')
