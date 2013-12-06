@@ -9,7 +9,7 @@ setup(
     author_email='justquick@gmail.com',
     url='http://github.com/justquick/python-varnish',
     scripts=['bin/varnish_manager'],
-    py_modules=['varnish'],
+    py_modules=['varnishadm'],
     classifiers=['Development Status :: 5 - Production/Stable',
                  'Environment :: Console',
                  'Intended Audience :: Developers',
