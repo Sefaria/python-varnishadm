@@ -92,7 +92,10 @@ class VarnishHandler(Telnet):
                 break
         status, length = map(int, buffer.split())
         content = ''
-        assert status == 200, 'Bad response code: {status} {text} ({command})'.format(status=status, text=self.read_until('\n').strip(), command=command)
+
+        if status != 200:
+            raise VarnishError(status, 'Bad response code: {status} {text} ({command})'.format(status=status, text=self.read_until('\n').strip(), command=command))
+
         while len(content) < length:
             content += self.read_until('\n')
         logging.debug('RECV: %s: %dB %s' % (status, length, content[:30]))
@@ -122,7 +125,14 @@ class VarnishHandler(Telnet):
         challenge = content[:32]
         response = sha256('%s\n%s\n%s\n' % (challenge, secret, challenge))
         response_str = 'auth %s' % response.hexdigest()
-        self.fetch(response_str)
+
+        try:
+            self.fetch(response_str)
+        except VarnishError as e:
+            if e.status == 107:
+                raise VarnishSecretInvalidError(107, "Invalid secret")
+
+            raise e
 
     # Information methods
     def ping(self, timestamp=None):
@@ -335,3 +345,15 @@ class VarnishManager(object):
     def close(self):
         self.run('close', threaded=True)
         self.servers = ()
+
+
+class VarnishError(RuntimeError):
+
+    def __init__(self, status, message, *args, **kwargs):
+        self.status = status
+        self.message = message
+        super(VarnishError, self).__init__(message, *args, **kwargs)
+
+
+class VarnishSecretInvalidError(VarnishError):
+    pass
