@@ -1,13 +1,13 @@
 from distutils.core import setup
 
 setup(
-    name='python-varnish',
+    name='python-varnishadm',
     version='0.2.2',
     long_description=open('README.rst').read(),
     description='Simple Python interface for the Varnish management port',
     author='Justin Quick',
     author_email='justquick@gmail.com',
-    url='http://github.com/justquick/python-varnish',
+    url='http://github.com/ByteInternet/python-varnishadm',
     scripts=['bin/varnish_manager'],
     py_modules=['varnishadm'],
     classifiers=['Development Status :: 5 - Production/Stable',
