@@ -164,7 +164,7 @@ class VarnishHandler(Telnet):
     def vcl_load(self, configname, filename):
         """
         vcl.load configname filename
-            Create a new configuration named configname with the contents of the specified file.
+            reate a new configuration named configname with the contents of the specified file.
         """
         return self.fetch('vcl.load %s %s' % (configname, filename))
 
@@ -296,7 +296,7 @@ class ThreadedRunner(Thread):
         super(ThreadedRunner, self).__init__()
 
     def run(self):
-        handler = VarnishHandler(self.addr, **self.kwargs)
+        handler = VarnishHandler(str(self.addr), **self.kwargs)  # cast to string so unicode address works
         for cmd in self.commands:
             if isinstance(cmd, tuple) and len(cmd) > 1:
                 getattr(handler, cmd[0].replace('.', '_'))(*cmd[1:])
