@@ -1,3 +1,27 @@
+python-varnishadm (20150319.144314) vivid; urgency=medium
+
+  [ Corey Oordt ]
+  * Version bump with support for establishing secret on instantiation
+
+  [ Flip ]
+  * Make vcl.show command work
+
+  [ Flip Hess ]
+  * Rename varnish.py to varnishadm.py
+  * Install varnishadm instead of varnish
+  * Import VarnishManager from varnishadm
+  * Import VarnishManager from varnishadm
+  * raise specific error when command or auth fails
+
+  [ Allard Hoeve ]
+  * Install as python-varnishadm
+  * Make unicode address work
+
+  [ Sjoerd Langkemper ]
+  * Add debian directory
+
+ -- Sjoerd Langkemper <sjoerd@byte.nl>  Thu, 19 Mar 2015 14:45:54 +0100
+
 python-varnishadm (0.2.2-1) unstable; urgency=low
 
   * source package automatically created by stdeb 0.6.0+git
