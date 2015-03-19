@@ -1,0 +1,31 @@
+Source: python-varnishadm
+Maintainer: Justin Quick <justquick@gmail.com>
+Section: python
+Priority: optional
+Build-Depends: python-all (>= 2.6.6-3), debhelper (>= 7.4.3)
+Standards-Version: 3.9.1
+
+Package: byte-python-varnishadm
+Architecture: all
+Depends: ${misc:Depends}, ${python:Depends}
+Description: Simple Python interface for the Varnish management port
+ Simple Python interface for the Varnish management port
+ =========================================================
+ .
+ .
+ :Author:
+    Justin Quick <justquick@gmail.com>, Sandy Walsh <github@darksecretsoftware.com>
+ :Version: 0.2
+ .
+ ::
+ .
+     pip install python-varnish==0.2.2
+ .
+ If you are running a version of varnish older than 3.0 then install python-varnish==0.1.2 instead.
+ .
+ Varnish is a state-of-the-art, high-performance HTTP accelerator.
+ For more information checkout `Varnish Site <https://varnish-cache.org/>`_
+ .
+ Varnish provides a simple telnet management interface for doing things like:
+ .
+   *  reloading configurations
