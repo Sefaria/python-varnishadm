@@ -1,1 +1,5 @@
 python_varnish.egg-info
+.idea
+build/
+dist/
+python_varnishadm.egg-info
