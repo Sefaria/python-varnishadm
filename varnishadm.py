@@ -33,8 +33,8 @@ https://www.varnish-cache.org/docs/3.0/tutorial/purging.html
 """
 from telnetlib import Telnet
 from threading import Thread
-from httplib import HTTPConnection
-from urlparse import urlparse
+from http.client import HTTPConnection
+from urllib.parse import urlparse
 from hashlib import sha256
 import logging
 
@@ -64,7 +64,7 @@ def http_purge_url(url):
 
 class VarnishHandler(Telnet):
     def __init__(self, host_port_timeout, secret=None, **kwargs):
-        if isinstance(host_port_timeout, basestring):
+        if isinstance(host_port_timeout, str):
             host_port_timeout = host_port_timeout.split(':')
         Telnet.__init__(self, *host_port_timeout)
         (status, length), content = self._read()
@@ -74,7 +74,7 @@ class VarnishHandler(Telnet):
             logging.error('Connecting failed with status: %i' % status)
 
     def _read(self):
-        (status, length), content = map(int, self.read_until('\n').split()), ''
+        (status, length), content = list(map(int, self.read_until('\n').split())), ''
         while len(content) < length:
             content += self.read_some()
         return (status, length), content[:-1]
@@ -90,7 +90,7 @@ class VarnishHandler(Telnet):
             buffer = self.read_until('\n').strip()
             if len(buffer):
                 break
-        status, length = map(int, buffer.split())
+        status, length = list(map(int, buffer.split()))
         content = ''
 
         if status != 200:
