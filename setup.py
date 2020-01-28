@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='python-varnishadm',
-    version='0.2.2',
+    version='1.0.0',
     long_description=open('README.rst').read(),
     description='Simple Python interface for the Varnish management port',
     author='Justin Quick',
