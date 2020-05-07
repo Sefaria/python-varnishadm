@@ -74,7 +74,7 @@ class VarnishHandler(Telnet):
             logging.error('Connecting failed with status: %i' % status)
 
     def _read(self):
-        (status, length), content = list(map(int, self.read_until('\n').split())), ''
+        (status, length), content = list(map(int, self.read_until(b'\n').split())), ''
         while len(content) < length:
             content += self.read_some()
         return (status, length), content[:-1]
@@ -85,19 +85,19 @@ class VarnishHandler(Telnet):
         return value is a tuple of ((status, length), content)
         """
         logging.debug('SENT: %s: %s' % (self.host, command))
-        self.write('%s\n' % command)
+        self.write('%s\n'.format(command).encode("utf-8"))
         while 1:
-            buffer = self.read_until('\n').strip()
+            buffer = self.read_until(b'\n').strip()
             if len(buffer):
                 break
         status, length = list(map(int, buffer.split()))
         content = ''
 
         if status != 200:
-            raise VarnishError(status, 'Bad response code: {status} {text} ({command})'.format(status=status, text=self.read_until('\n').strip(), command=command))
+            raise VarnishError(status, 'Bad response code: {status} {text} ({command})'.format(status=status, text=self.read_until(b'\n').strip(), command=command))
 
         while len(content) < length:
-            content += self.read_until('\n')
+            content += self.read_until(b'\n')
         logging.debug('RECV: %s: %dB %s' % (status, length, content[:30]))
         self.read_eager()
         return (status, length), content
