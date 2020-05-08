@@ -91,7 +91,7 @@ class VarnishHandler(Telnet):
             if len(buffer):
                 break
         status, length = list(map(int, buffer.split()))
-        content = ''
+        content = b''
 
         if status != 200:
             raise VarnishError(status, 'Bad response code: {status} {text} ({command})'.format(status=status, text=self.read_until(b'\n').strip(), command=command))
@@ -100,7 +100,9 @@ class VarnishHandler(Telnet):
             content += self.read_until(b'\n')
         logging.debug('RECV: %s: %dB %s' % (status, length, content[:30]))
         self.read_eager()
-        return (status, length), content
+        # the length field as computed in the bytestrings might not match the length of the decoded utf-8 string.
+        # do we care? 
+        return (status, length), content.decode("utf-8")
 
     # Service control methods
     def start(self):
