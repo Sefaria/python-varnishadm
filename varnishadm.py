@@ -124,6 +124,12 @@ class VarnishHandler(Telnet):
         return self.close()
 
     def auth(self, secret, content):
+        """
+
+        :param secret: bytes
+        :param content: bytes
+        :return:
+        """
         challenge = content[:32]
         response = sha256(b'%s\n%s%s\n' % (challenge, secret, challenge))
         response_str = 'auth %s' % response.hexdigest()
