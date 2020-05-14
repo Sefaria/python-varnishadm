@@ -74,7 +74,7 @@ class VarnishHandler(Telnet):
             logging.error('Connecting failed with status: %i' % status)
 
     def _read(self):
-        (status, length), content = list(map(int, self.read_until(b'\n').split())), ''
+        (status, length), content = list(map(int, self.read_until(b'\n').split())), b''
         while len(content) < length:
             content += self.read_some()
         return (status, length), content[:-1]
