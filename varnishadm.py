@@ -131,8 +131,12 @@ class VarnishHandler(Telnet):
         :return:
         """
         challenge = content[:32]
-        response = sha256(b'%s\n%s%s\n' % (challenge, secret, challenge))
-        response_str = 'auth %s' % response.hexdigest()
+        challenge = str(challenge, 'utf-8')
+        auth = '{}\n{}{}\n'.format(challenge, secret, challenge)
+        response = sha256(auth.encode('utf-8'))
+        response_str = 'auth {}'.format(response.hexdigest())
+
+        self.fetch(response_str)
 
         try:
             self.fetch(response_str)
